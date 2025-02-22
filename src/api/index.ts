@@ -14,10 +14,16 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(
+    cors({
+      origin: "http://localhost:5173", 
+      methods: "GET,POST,PUT,DELETE,PATCH",
+    })
+);
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(express.json());
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/todo', todoRoutes);
