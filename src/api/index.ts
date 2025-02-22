@@ -7,6 +7,7 @@ import compression from 'compression';
 import cors from 'cors';
 import logger from './config/logger/logger';
 import './config/db/db';
+import authRoutes from './routes/auth.routes';
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ app.use(cors());
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+
+app.use('/api/v1/auth', authRoutes);
 
 const server = http.createServer(app);
 
