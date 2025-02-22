@@ -8,6 +8,7 @@ import cors from 'cors';
 import logger from './config/logger/logger';
 import './config/db/db';
 import authRoutes from './routes/auth.routes';
+import todoRoutes from './routes/todo.routes';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/todo', todoRoutes);
 
 const server = http.createServer(app);
 
