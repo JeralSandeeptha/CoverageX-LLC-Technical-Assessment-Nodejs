@@ -125,14 +125,20 @@ const login = async (req: Request, res: Response): Promise<any> => {
             process.env.JWT_REFRESH_SECRET as string,
             { expiresIn: "7d" }
         );
+
+        const loggedUser = {
+            id: (await user).rows[0].id,
+            email: (await user).rows[0].email,
+            created_at: (await user).rows[0].created_at
+        }
   
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+        res.cookie('refreshToken', refreshToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
         return res.status(HttpStatus.ACCEPTED).json(
             new SuccessResponse(
                 HttpStatus.ACCEPTED,
                 'User login query was successfull',
                 {
-                    user: (await user).rows[0].name,
+                    user: loggedUser,
                     accessToken: accessToken
                 }
             )
@@ -152,6 +158,7 @@ const login = async (req: Request, res: Response): Promise<any> => {
 const refreshToken = (req: Request, res: Response): Promise<any> => {
     return new Promise((resolve, reject) => {
         const { refreshToken } = req.cookies;
+        console.log(refreshToken);
         if (!refreshToken) {
             logger.error('No refresh token. Please login again')
             return resolve(res.status(401).json({ message: 'No refresh token' }));
