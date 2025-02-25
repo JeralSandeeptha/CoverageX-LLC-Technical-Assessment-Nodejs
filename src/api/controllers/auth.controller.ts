@@ -132,7 +132,7 @@ const login = async (req: Request, res: Response): Promise<any> => {
             created_at: (await user).rows[0].created_at
         }
   
-        res.cookie('refreshToken', refreshToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
         return res.status(HttpStatus.ACCEPTED).json(
             new SuccessResponse(
                 HttpStatus.ACCEPTED,
@@ -172,7 +172,7 @@ const refreshToken = (req: Request, res: Response): Promise<any> => {
             const newAccessToken = jwt.sign(
                 { id: decoded.id },
                 process.env.JWT_SECRET as string, 
-                { expiresIn: '7d' }
+                { expiresIn: '15min' }
             );
 
             return resolve(res.json({ accessToken: newAccessToken }));
