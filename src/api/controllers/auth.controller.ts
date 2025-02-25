@@ -117,13 +117,13 @@ const login = async (req: Request, res: Response): Promise<any> => {
         const accessToken = jwt.sign(
             { id: (await user).rows[0].id },
             process.env.JWT_SECRET, 
-            { expiresIn: "1min" }
+            { expiresIn: "15min" }
         );
         
         const refreshToken = jwt.sign(
             { id: (await user).rows[0].id },
             process.env.JWT_REFRESH_SECRET as string,
-            { expiresIn: "10min" }
+            { expiresIn: "7d" }
         );
 
         const loggedUser = {
@@ -172,7 +172,7 @@ const refreshToken = (req: Request, res: Response): Promise<any> => {
             const newAccessToken = jwt.sign(
                 { id: decoded.id },
                 process.env.JWT_SECRET as string, 
-                { expiresIn: '1min' }
+                { expiresIn: '15min' }
             );
 
             return resolve(res.json({ accessToken: newAccessToken }));
