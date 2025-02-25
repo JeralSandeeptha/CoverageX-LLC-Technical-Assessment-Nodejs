@@ -7,15 +7,29 @@ import compression from 'compression';
 import cors from 'cors';
 import logger from './config/logger/logger';
 import './config/db/db';
+import authRoutes from './routes/auth.routes';
+import todoRoutes from './routes/todo.routes';
+import userRoutes from './routes/user.routes';
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(
+    cors({
+      origin: "http://localhost:5173", 
+      methods: "GET,POST,PUT,DELETE,PATCH",
+      credentials: true
+    })
+);
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(express.json());
+
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/todo', todoRoutes);
+app.use('/api/v1/user', userRoutes);
 
 const server = http.createServer(app);
 
