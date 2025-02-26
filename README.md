@@ -102,6 +102,11 @@ npm run dev
 
 ### Run thorugh Docker
 
+If you are want to run the project locally with Docker? You can run the follwing command.
+```bash
+docker run -p 3000:3000 -e PORT=3000 -e DATABASE_URL="postgres://postgres:1234@host.docker.internal:5432/TodoApp" -e JWT_SECRET=my_secret -e JWT_REFRESH_SECRET=your_refresh_secret jeralsandeeptha/coveragex-nodejs
+```
+
 ## Test Application
 
 ## API Documentation
