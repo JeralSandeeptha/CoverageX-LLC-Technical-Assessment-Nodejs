@@ -116,6 +116,10 @@ docker run -p 3000:3000 -e PORT=3000 -e DATABASE_URL="postgres://postgres:1234@h
 
 ## Test Application
 
+```bash
+npm run test
+```
+
 ## API Documentation
 
 This is the [API Documentation](https://documenter.getpostman.com/view/20760727/2sAYdeNC6s)
