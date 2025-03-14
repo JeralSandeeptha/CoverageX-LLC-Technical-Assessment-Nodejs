@@ -190,10 +190,67 @@ const logout = (req: Request, res: Response) => {
         )
     );
 };
+
+const googleLogin = async (req: Request, res: Response): Promise<any> => {
+    const { email } = req.body; 
+    try {
+        const user = db.query('SELECT * from users WHERE email = $1', [email]);
+        if ((await user).rows.length === 0) {
+            logger.warn("User not found. Email is incorrect");
+            return res.status(HttpStatus.NOT_FOUND).json(
+                new ErrorResponse(
+                    HttpStatus.NOT_FOUND,
+                    "User login query was failed",
+                    "User not found. Email is incorrect."
+                )
+            );
+        }
+  
+        const accessToken = jwt.sign(
+            { id: (await user).rows[0].id },
+            process.env.JWT_SECRET, 
+            { expiresIn: "15min" }
+        );
+        
+        const refreshToken = jwt.sign(
+            { id: (await user).rows[0].id },
+            process.env.JWT_REFRESH_SECRET as string,
+            { expiresIn: "7d" }
+        );
+
+        const loggedUser = {
+            id: (await user).rows[0].id,
+            email: (await user).rows[0].email,
+            created_at: (await user).rows[0].created_at
+        }
+  
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+        return res.status(HttpStatus.ACCEPTED).json(
+            new SuccessResponse(
+                HttpStatus.ACCEPTED,
+                'User google login query was successfull',
+                {
+                    user: loggedUser,
+                    accessToken: accessToken
+                }
+            )
+        );
+    } catch (error: any) {
+        logger.error('User login query internal server error');
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(
+            new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                'User google login query internal server error',
+                'User google login failed'
+            )
+        );
+    }
+};
   
 export {
     register,
     login,
     refreshToken,
-    logout
+    logout,
+    googleLogin
 }
